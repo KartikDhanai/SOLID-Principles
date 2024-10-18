@@ -1,0 +1,57 @@
+L : Liskov Substitution Principle (LSP)
+The Liskov Substitution Principle (LSP) states that subclasses should be replaceable for their base (parent) classes without affecting the correctness of the program. In simpler terms, objects of a derived class should be able to stand in for objects of the base class without altering behavior.
+
+->How can this be done?
+The key to adhering to LSP is ensuring that derived classes correctly implement and extend the functionality of the base class without changing the expected behavior. This means that if a function expects an object of a base class, it should work fine with any of its derived classes as well.
+
+Problem without LSP:
+Imagine we have a base class Bird and a subclass Penguin. If the base class has a method like fly(), penguins can't fly! This violates the Liskov Substitution Principle because not every bird can fly, and if we replace a Bird object with a Penguin, the program might not behave correctly.
+
+Code: 
+class Bird {
+public:
+    virtual void fly() {
+        cout << "Bird is flying..." << endl;
+    }
+};
+
+class Penguin : public Bird {
+public:
+    void fly() override {
+        // Penguins can't fly!
+        cout << "Penguin can't fly!" << endl;
+    }
+};
+If a function expects a Bird and calls fly(), it won’t work properly for Penguin, violating LSP.
+
+Solution with LSP:
+Make sure that all birds can share common behavior (such as walk()), and we handle specific behavior like flying in derived classes.
+
+class Bird {
+public:
+    virtual void walk() {
+        cout << "Bird is walking..." << endl;
+    }
+    // No fly() method here, as not all birds can fly
+};
+
+class FlyingBird : public Bird {
+public:
+    virtual void fly() {
+        cout << "Bird is flying..." << endl;
+    }
+};
+
+class Sparrow : public FlyingBird {
+    // Inherits fly() from FlyingBird
+};
+
+class Penguin : public Bird {
+    // No fly() method, but can walk like other birds
+};
+
+Benefits:
+1) Correct behavior: You can't pass a Penguin where flying behavior is expected, ensuring the program behaves as intended.
+2) LSP-compliant: Subclasses like Sparrow and Penguin can be used in place of Bird objects without breaking functionality, because they only implement behaviors they are supposed to.
+
+In this way, by designing our classes carefully and ensuring derived classes behave appropriately, we adhere to the Liskov Substitution Principle (LSP).
