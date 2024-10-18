@@ -1,0 +1,74 @@
+I : Interface Segregation Principle (ISP)
+The Interface Segregation Principle (ISP) states that no client should be forced to depend on methods it does not use. Instead of creating large interfaces with many methods, it's better to create smaller, more specific interfaces, so that classes only implement what they actually need.
+
+-> How can this be done?
+We achieve ISP by splitting large, bulky interfaces into smaller, more focused ones. Each class or client should only be required to implement the methods that are relevant to it, avoiding unnecessary dependencies.
+
+Example :
+
+Problem without ISP:
+Let’s say we have an interface Worker that defines various methods for different types of workers. Some workers are regular employees, others are machines, and both have different responsibilities:
+class Worker {
+public:
+    virtual void work() = 0;
+    virtual void eat() = 0;
+};
+
+Now, imagine we have a class Robot that needs to implement this interface:
+
+class Robot : public Worker {
+public:
+    void work() override {
+        cout << "Robot is working..." << endl;
+    }
+
+    void eat() override {
+        // Robots don't eat, but we are forced to implement this!
+        cout << "Robot doesn't eat!" << endl;
+    }
+};
+Here, the Robot class is forced to implement the eat() method, even though it doesn’t make sense for robots to eat. This violates the Interface Segregation Principle because Robot is forced to depend on a method it doesn’t need.
+
+-> WITH ISP :
+We should split the Worker interface into smaller, more specific interfaces. Each worker can then implement only the methods relevant to them.
+
+class Workable {
+public:
+    virtual void work() = 0;
+};
+
+class Eatable {
+public:
+    virtual void eat() = 0;
+};
+
+class Human : public Workable, public Eatable {
+public:
+    void work() override {
+        cout << "Human is working..." << endl;
+    }
+
+    void eat() override {
+        cout << "Human is eating..." << endl;
+    }
+};
+
+class Robot : public Workable {
+public:
+    void work() override {
+        cout << "Robot is working..." << endl;
+    }
+    // No need for eat() method!
+};
+
+In this design:
+
+Human implements both Workable and Eatable because humans can both work and eat.
+Robot only implements Workable because robots don’t need to eat.
+
+->Benefits:
+1) No unnecessary dependencies: Robot doesn't have to implement eat(), so it's not burdened by irrelevant methods.
+2) Flexible and modular: We can add new behaviors by creating new, small interfaces without affecting existing classes.
+
+By applying the Interface Segregation Principle (ISP), we ensure that classes only depend on methods they actually need, making the code cleaner and more maintainable.
+
