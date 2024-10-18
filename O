@@ -1,0 +1,93 @@
+O : Open/Closed Principle
+
+It states that "The Software entities like class , methods etc are OPEN for EXTENSION , but CLOSED for MODIFICATION.
+This means that you should be able to add new functionality to a class without changing its existing code, reducing the risk of introducing bugs into a system.
+
+How can this be done?
+-> This can be achieved using INHERITANCE or INTERFACES in C++. 
+
+EXAMPLE :
+->Problem without OCP:
+Imagine you have a Shape class that calculates the area of different shapes. Every time you add a new shape, you need to modify the Shape class, which violates OCP:
+
+Code : 
+class Shape {
+public:
+    int type;  // 1 for circle, 2 for rectangle
+
+    double calculateArea() {
+        if (type == 1) {
+            // Calculate area of a circle
+            double radius = 5.0;
+            return 3.14 * radius * radius;
+        } 
+        else if (type == 2) {
+            // Calculate area of a rectangle
+            double length = 10.0, breadth = 5.0;
+            return length * breadth;
+        }
+        return 0;
+    }
+};
+If you want to add more shapes (e.g., a triangle), you need to modify the calculateArea function. This violates the Open/Closed Principle because the class needs to be modified every time you add new shapes.
+
+-> USING OCP : 
+We will use  polymorphism (Runtime i.e Function Overriding) and inheritance.
+Instead of modifying the existing class, we will extend it by creating new subclasses for each shape:
+
+Code : 
+class Shape {
+public:
+    virtual double calculateArea() = 0;  // Pure virtual function (abstract method)
+};
+
+class Circle : public Shape {
+public:
+    double radius;
+    Circle(double r) : radius(r) {}
+
+    double calculateArea() override {
+        return 3.14 * radius * radius;
+    }
+};
+
+class Rectangle : public Shape {
+public:
+    double length, breadth;
+    Rectangle(double l, double b) : length(l), breadth(b) {}
+
+    double calculateArea() override {
+        return length * breadth;
+    }
+};
+
+class Triangle : public Shape {
+public:
+    double base, height;
+    Triangle(double b, double h) : base(b), height(h) {}
+
+    double calculateArea() override {
+        return 0.5 * base * height;
+    }
+};
+
+int main() {
+    Shape* circle = new Circle(5);
+    Shape* rectangle = new Rectangle(10, 5);
+    Shape* triangle = new Triangle(8, 6);
+
+    cout << "Circle Area: " << circle->calculateArea() << endl;
+    cout << "Rectangle Area: " << rectangle->calculateArea() << endl;
+    cout << "Triangle Area: " << triangle->calculateArea() << endl;
+
+    delete circle;
+    delete rectangle;
+    delete triangle;
+    return 0;
+}
+
+->Benefits:
+1)Open for extension: You can add new shapes like Triangle by extending the Shape class without changing existing code.
+2)Closed for modification: The existing classes like Circle and Rectangle remain untouched, reducing the risk of introducing bugs.
+
+With this approach, you can extend functionality (e.g., adding new shapes) without modifying the core Shape class, adhering to the Open/Closed Principle (OCP).
