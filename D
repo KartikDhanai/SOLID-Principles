@@ -1,0 +1,118 @@
+D : Dependency Inversion Principle (DIP) 
+The Dependency Inversion Principle (DIP) states that high-level modules should not depend on low-level modules, but both should depend on abstractions (interfaces). Additionally, abstractions should not depend on details; details should depend on abstractions. This ensures that changes in low-level modules don’t affect high-level modules and vice versa.
+
+->How can this be done?
+We can achieve DIP by introducing abstractions (interfaces) between high-level and low-level modules. This way, the high-level class only depends on the abstraction, not on the concrete implementation, making the system more flexible and scalable.
+
+->Problem without DIP:
+Let’s say we have a Computer class (high-level module) that depends directly on a Keyboard and Monitor (low-level modules):
+
+class Keyboard {
+public:
+    void type() {
+        cout << "Typing on keyboard..." << endl;
+    }
+};
+
+class Monitor {
+public:
+    void display() {
+        cout << "Displaying on monitor..." << endl;
+    }
+};
+
+class Computer {
+    Keyboard keyboard;
+    Monitor monitor;
+
+public:
+    void use() {
+        keyboard.type();
+        monitor.display();
+    }
+};
+
+Here, the Computer class is directly dependent on the Keyboard and Monitor classes. If we wanted to swap the Keyboard with a different type of keyboard, or use a new type of monitor, we would need to modify the Computer class, violating DIP.
+
+Solution with DIP:
+To adhere to DIP, we need to introduce abstractions (interfaces). Instead of depending on specific Keyboard and Monitor implementations, the Computer class should depend on abstractions (interfaces) like IKeyboard and IMonitor. The specific implementations of Keyboard and Monitor will depend on these interfaces.
+
+Step 1: Create interfaces for abstraction:
+
+class IKeyboard {
+public:
+    virtual void type() = 0;
+};
+
+class IMonitor {
+public:
+    virtual void display() = 0;
+};
+
+Step 2: Implement these interfaces in the low-level classes:
+class Keyboard : public IKeyboard {
+public:
+    void type() override {
+        cout << "Typing on keyboard..." << endl;
+    }
+};
+
+class Monitor : public IMonitor {
+public:
+    void display() override {
+        cout << "Displaying on monitor..." << endl;
+    }
+};
+
+Step 3: Modify the Computer class to depend on abstractions:
+class Computer {
+    IKeyboard* keyboard;
+    IMonitor* monitor;
+
+public:
+    Computer(IKeyboard* k, IMonitor* m) : keyboard(k), monitor(m) {}
+
+    void use() {
+        keyboard->type();
+        monitor->display();
+    }
+};
+
+Step 4: Example usage:
+Now, the Computer class only depends on IKeyboard and IMonitor interfaces, and not on the specific implementations of Keyboard and Monitor. This makes the system more flexible:
+
+int main() {
+    IKeyboard* keyboard = new Keyboard();
+    IMonitor* monitor = new Monitor();
+
+    Computer computer(keyboard, monitor);
+    computer.use();
+
+    delete keyboard;
+    delete monitor;
+    return 0;
+}
+
+Step 5: Add new low-level modules:
+If we later decide to use a different type of Keyboard or Monitor, we can implement the same interfaces without modifying the Computer class. For example:
+
+class WirelessKeyboard : public IKeyboard {
+public:
+    void type() override {
+        cout << "Typing on wireless keyboard..." << endl;
+    }
+};
+
+Now, we can easily switch to a WirelessKeyboard without modifying the Computer class:
+
+IKeyboard* keyboard = new WirelessKeyboard();
+IMonitor* monitor = new Monitor();
+
+Computer computer(keyboard, monitor);
+computer.use();
+
+Benefits:
+1) Decoupling: The Computer class no longer depends directly on Keyboard or Monitor. It depends on abstractions (IKeyboard and IMonitor), making the system more modular and flexible.
+2) Scalability: New implementations (e.g., WirelessKeyboard) can be introduced without changing the high-level module (Computer).
+
+By following the Dependency Inversion Principle (DIP), we make our code more modular, easier to maintain, and adaptable to future changes.
